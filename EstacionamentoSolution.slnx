@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Estacionamento.Api/Estacionamento.Api.csproj" Id="429a2fd9-654d-4cfa-b417-cefd9cf768b4" />
+  <Project Path="Estacionamento.Application/Estacionamento.Application.csproj" Id="5cc63fc3-cfd5-4af3-81a9-1b0395c9e0ec" />
+  <Project Path="Estacionamento.Domain/Estacionamento.Domain.csproj" />
+  <Project Path="Estacionamento.Infrastructure/Estacionamento.Infrastructure.csproj" Id="f8562843-d4bc-4efc-bd80-3ba2d821fc32" />
+  <Project Path="Estacionamento.Tests/Estacionamento.Tests.csproj" Id="f2f71af5-5ed3-4035-a451-75f61a1ba630" />
+</Solution>

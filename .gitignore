@@ -1,0 +1,47 @@
+## .NET / Visual Studio
+
+# Build results
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+
+# VS Code
+.vscode/
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# Publish
+**/Properties/PublishProfiles/*.pubxml.user
+publish/
+
+# Local secrets / config
+appsettings.*.local.json
+secrets.json
+*.env
+
+# Rider/VS temp
+*.DotSettings.user
+
+# OS files
+.DS_Store
+Thumbs.db
