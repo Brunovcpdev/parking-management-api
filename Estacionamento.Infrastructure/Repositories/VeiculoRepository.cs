@@ -24,5 +24,10 @@ namespace Estacionamento.Infrastructure.Repositories
             await _context.Veiculos.AddAsync(veiculo);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Veiculo?> ObterPorIdAsync(int id)
+        {
+            return await _context.Veiculos.FindAsync(id);
+        }
     }
 }
