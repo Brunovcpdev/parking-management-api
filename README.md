@@ -22,12 +22,13 @@ O projeto é dividido em camadas, cada uma em seu próprio projeto, seguindo o f
 
 - Registro de entrada de veículo, com verificação de vaga disponível e bloqueio de entrada duplicada para a mesma placa
 - Registro de saída de veículo, com cálculo automático do valor a pagar
+- Consulta do resumo de vagas (total, livres, ocupadas)
 - Cadastro automático de veículo na primeira vez que uma placa é vista pelo sistema
 - Liberação e ocupação de vagas de forma consistente com o fluxo de entrada/saída
+- Tratamento de erro com exceções específicas de domínio, mapeadas para os códigos HTTP corretos (404, 409, 400)
 
 ### Ainda não implementado
 
-- Consulta de vagas disponíveis (GET)
 - Histórico de movimentações por placa/período
 - Cadastro de tabela de preços via API (hoje é feito direto no banco)
 - Autenticação/autorização
@@ -71,6 +72,8 @@ Registra a entrada de um veículo.
 
 **Possíveis erros**: `409 Conflict` (placa já possui entrada ativa, ou não há vaga disponível), `400 Bad Request` (dados inválidos, ex: placa vazia).
 
+`tipoVeiculo` segue o enum: `1 = Carro`, `2 = Moto`, `3 = Caminhonete`.
+
 ### `POST /api/Saida`
 
 Registra a saída de um veículo e calcula o valor a pagar.
@@ -94,17 +97,29 @@ Registra a saída de um veículo e calcula o valor a pagar.
 }
 ```
 
-**Possíveis erros**: `404 Not Found` (ticket, vaga, veículo ou tabela de preço não encontrados; ticket já finalizado).
+**Possíveis erros**: `404 Not Found` (ticket, vaga, veículo ou tabela de preço não encontrados), `409 Conflict` (ticket já finalizado).
 
-`tipoVeiculo` segue o enum: `1 = Carro`, `2 = Moto`, `3 = Caminhonete`.
+### `GET /api/Vaga`
+
+Retorna o resumo de ocupação das vagas.
+
+**Response — 200 OK**
+```json
+{
+  "totalVagas": 1,
+  "vagasLivres": 1,
+  "vagasOcupadas": 0
+}
+```
 
 ## Testes
 
-O projeto conta com testes unitários (xUnit + Moq) cobrindo:
+O projeto conta com 13 testes unitários (xUnit + Moq) cobrindo:
 
 - **RN01** — bloqueio de entrada duplicada para a mesma placa (`EntradaServiceTests`)
 - **RN02** — cálculo de valor: dentro da tolerância, por fração (com `[Theory]`/`[InlineData]` cobrindo múltiplos cenários) e com teto de diária (`CalculadoraPrecoServiceTests`)
 - **RN03** — bloqueio de entrada quando não há vaga disponível (`EntradaServiceTests`)
+- **Fluxo de saída** — todos os cenários de erro (ticket/vaga/veículo/tabela de preço não encontrados, ticket já finalizado) e o caminho de sucesso completo, incluindo verificação dos efeitos colaterais nas entidades (`SaidaServiceTests`)
 
 Para rodar os testes:
 
