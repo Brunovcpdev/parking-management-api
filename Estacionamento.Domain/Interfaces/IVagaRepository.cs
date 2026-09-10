@@ -7,6 +7,7 @@ namespace Estacionamento.Domain.Interfaces
     {
         Task<Vaga?> ObterVagaLivreAsync(TipoVeiculo tipoVeiculo);
         Task<Vaga?> ObterPorIdAsync(int id);
+        Task<List<Vaga>> ObterTodasAsync();
         Task AtualizarAsync(Vaga vaga);
     }
 }

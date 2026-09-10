@@ -16,6 +16,7 @@ builder.Services.AddScoped<IEntradaService, EntradaService>();
 builder.Services.AddScoped<ITabelaPrecoRepository, TabelaPrecoRepository>();
 builder.Services.AddScoped<ICalculadoraPrecoService, CalculadoraPrecoService>();
 builder.Services.AddScoped<ISaidaService, SaidaService>();
+builder.Services.AddScoped<IVagaConsultaService, VagaConsultaService>();
 
 // Add services to the container.
 

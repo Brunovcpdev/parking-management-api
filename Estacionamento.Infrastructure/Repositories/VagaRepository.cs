@@ -31,5 +31,10 @@ namespace Estacionamento.Infrastructure.Repositories
         {
             return await _context.Vagas.FindAsync(id);
         }
+
+        public async Task<List<Vaga>> ObterTodasAsync()
+        {
+            return await _context.Vagas.ToListAsync();
+        }
     }
 }

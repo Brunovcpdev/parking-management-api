@@ -1,6 +1,7 @@
 ﻿using Estacionamento.Application.DTos.Requests;
 using Estacionamento.Application.DTOs.Request;
 using Estacionamento.Application.Interfaces;
+using Estacionamento.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Estacionamento.Api.Controllers
@@ -24,10 +25,28 @@ namespace Estacionamento.Api.Controllers
                 var response = await _saidaService.RegistrarSaidaAsync(request);
                     return Ok(response);
             }
-            catch(InvalidOperationException ex)
+            catch(TicketNaoEncontradoException ex)
             {
                 return NotFound(new { mensagem = ex.Message });
             }
+            catch(VagaNaoEncontradaException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+            catch(VeiculoNaoEncontradoException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+            catch(TabelaPrecoNaoEncontradaException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+            catch (TicketJaFinalizadoException ex)
+            {
+                return Conflict(new { mensagem = ex.Message });
+            }
+
+
         }
     }
 }

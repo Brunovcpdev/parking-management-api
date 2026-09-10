@@ -6,6 +6,7 @@ using Estacionamento.Application.Interfaces;
 using Estacionamento.Domain.Entities;
 using Estacionamento.Domain.Enums;
 using Estacionamento.Domain.Interfaces;
+using Estacionamento.Domain.Exceptions;
 
 
 namespace Estacionamento.Application.Services
@@ -37,24 +38,25 @@ namespace Estacionamento.Application.Services
             // 1. Buscar o ticket e validar se existe e está ativo
             var ticket = await _ticketRepository.ObterPorIdAsync(request.TicketId);
             if (ticket is null)
-                throw new InvalidOperationException($"Ticket {request.TicketId} não encontrado");
+                throw new TicketNaoEncontradoException(ticketId: request.TicketId); //argumento nomeado(named argument) explicitando qual parâmetro está recebendo esse valor
 
             if (ticket.Status != StatusTicket.Ativo)
-                throw new InvalidOperationException($"Ticket {request.TicketId} já foi finalizado ou cancelado.");
+                throw new TicketJaFinalizadoException(ticketId: request.TicketId);
 
             // 2. Buscar a vaga e o veículo relacionados ao ticket
             var vaga = await _vagaRepository.ObterPorIdAsync(ticket.VagaId);
             if (vaga is null)
-                throw new InvalidOperationException($"Vaga {ticket.VagaId} não encontrada.");
-            
+                throw new VagaNaoEncontradaException(vagaId: ticket.VagaId);
+
+
             var veiculo = await _veiculoRepository.ObterPorIdAsync(ticket.VeiculoId);
             if (veiculo is null)
-                throw new InvalidOperationException($"Veículo {ticket.VeiculoId} não encontrado.");
+                throw new VeiculoNaoEncontradoException(veiculoId: ticket.VeiculoId);
 
             // 3. Buscar a tabela de preço correspondente ao tipo do veículo
             var tabelaPreco = await _tabelaPrecoRepository.ObterPorTipoVeiculoAsync(veiculo.Tipo);
             if (tabelaPreco is null)
-                throw new InvalidOperationException($"Não há tabela de preço cadastrada para o tipo {veiculo.Tipo}.");
+                throw new TabelaPrecoNaoEncontradaException(tipoVeiculo: veiculo.Tipo);
 
             // 4. Calcular o valor a pagar
             var dataHoraSaida = DateTime.UtcNow;
