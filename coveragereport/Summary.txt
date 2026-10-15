@@ -1,0 +1,44 @@
+Summary
+  Generated on: 29/09/2026 - 21:39:51
+  Coverage date: 29/09/2026 - 21:33:38
+  Parser: Cobertura
+  Assemblies: 2
+  Classes: 20
+  Files: 20
+  Line coverage: 67.5%
+  Covered lines: 160
+  Uncovered lines: 77
+  Coverable lines: 237
+  Total lines: 487
+  Branch coverage: 60% (24 of 40)
+  Covered branches: 24
+  Total branches: 40
+  Method coverage: 69.1% (47 of 68)
+  Full method coverage: 61.7% (42 of 68)
+  Covered methods: 47
+  Fully covered methods: 42
+  Total methods: 68
+
+Estacionamento.Application                                                62.8%
+  Estacionamento.Application.DTOs.Request.RegistrarSaidaRequest            100%
+  Estacionamento.Application.DTos.Requests.RegistrarEntradaRequest          50%
+  Estacionamento.Application.DTOs.Response.ComprovantePagamentoResponse    100%
+  Estacionamento.Application.DTOs.Response.VagaDisponivelResponse            0%
+  Estacionamento.Application.DTos.Responses.TicketResponse                   0%
+  Estacionamento.Application.Services.CalculadoraPrecoService              100%
+  Estacionamento.Application.Services.EntradaService                      40.6%
+  Estacionamento.Application.Services.SaidaService                         100%
+  Estacionamento.Application.Services.VagaConsultaService                    0%
+
+Estacionamento.Domain                                                     72.4%
+  Estacionamento.Domain.Entities.TabelaPreco                              69.5%
+  Estacionamento.Domain.Entities.Ticket                                   81.4%
+  Estacionamento.Domain.Entities.Vaga                                     46.4%
+  Estacionamento.Domain.Entities.Veiculo                                  70.5%
+  Estacionamento.Domain.Exceptions.TabelaPrecoNaoEncontradaException       100%
+  Estacionamento.Domain.Exceptions.TicketJaFinalizadoException             100%
+  Estacionamento.Domain.Exceptions.TicketNaoEncontradoException            100%
+  Estacionamento.Domain.Exceptions.VagaIndisponivelException               100%
+  Estacionamento.Domain.Exceptions.VagaNaoEncontradaException              100%
+  Estacionamento.Domain.Exceptions.VeiculoJaEstacionadoException           100%
+  Estacionamento.Domain.Exceptions.VeiculoNaoEncontradoException           100%

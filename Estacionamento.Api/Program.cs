@@ -4,6 +4,9 @@ using Estacionamento.Application.Interfaces;
 using Estacionamento.Application.Services;
 using Estacionamento.Domain.Interfaces;
 using Estacionamento.Infrastructure.Repositories;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -17,6 +20,24 @@ builder.Services.AddScoped<ITabelaPrecoRepository, TabelaPrecoRepository>();
 builder.Services.AddScoped<ICalculadoraPrecoService, CalculadoraPrecoService>();
 builder.Services.AddScoped<ISaidaService, SaidaService>();
 builder.Services.AddScoped<IVagaConsultaService, VagaConsultaService>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
 
 // Add services to the container.
 
@@ -35,6 +56,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

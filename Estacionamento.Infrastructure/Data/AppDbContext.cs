@@ -12,6 +12,7 @@ namespace Estacionamento.Infrastructure.Data
         public DbSet<Ticket> Tickets { get; set; } = null!;
         public DbSet<Vaga> Vagas { get; set; } = null!;
         public DbSet<TabelaPreco> TabelaPrecos { get; set; } = null!;
+        public DbSet<Usuario> Usuarios { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +25,12 @@ namespace Estacionamento.Infrastructure.Data
             modelBuilder.Entity<Ticket>(entity =>
             {
                 entity.Property(t => t.ValorCobrado).HasPrecision(18, 2);
+            });
+
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.Property(u => u.Login).HasMaxLength(100);
+                entity.HasIndex(u => u.Login).IsUnique();
             });
         }
     }
