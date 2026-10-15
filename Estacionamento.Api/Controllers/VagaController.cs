@@ -1,9 +1,11 @@
 ﻿using Estacionamento.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Estacionamento.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class VagaController : ControllerBase
     {

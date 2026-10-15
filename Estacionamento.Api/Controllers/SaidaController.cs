@@ -3,10 +3,12 @@ using Estacionamento.Application.DTOs.Request;
 using Estacionamento.Application.Interfaces;
 using Estacionamento.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Estacionamento.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class SaidaController : ControllerBase
     {

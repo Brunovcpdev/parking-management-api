@@ -5,9 +5,11 @@ using Estacionamento.Application.Interfaces;
 using Estacionamento.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Estacionamento.Api.Controllers
 {
+  
     [ApiController]
     [Route("api/[controller]")]
     public class AutenticacaoController : ControllerBase
@@ -19,6 +21,7 @@ namespace Estacionamento.Api.Controllers
             _autenticacaoService = autenticacaoService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Registrar")]
         public async Task<IActionResult> Registrar([FromBody] RegistrarUsuarioRequest request)
         {

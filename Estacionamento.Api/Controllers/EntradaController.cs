@@ -2,11 +2,13 @@
 using Estacionamento.Application.Interfaces;
 using Estacionamento.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Estacionamento.Api.Controllers
 {
     [ApiController]
-    [Route("/api[controller]")]
+    [Authorize]
+    [Route("api/[controller]")]
     public class EntradaController : ControllerBase
     {
         private readonly IEntradaService _entradaService;
