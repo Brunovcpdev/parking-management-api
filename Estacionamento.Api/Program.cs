@@ -8,6 +8,10 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Estacionamento.Application.DTos.Requests;
+using Estacionamento.Domain.Enums;
+using Estacionamento.Domain.Exceptions;
+using Estacionamento.Application.DTOs.Request;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,6 +77,43 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+using (var escopo = app.Services.CreateScope())
+{
+    try
+    {
+        var configuracao = escopo.ServiceProvider.GetRequiredService<IConfiguration>();
+        var loginAdmin = configuracao["AdminInicial:Login"];
+        var senhaAdmin = configuracao["AdminInicial:Senha"];
+
+        if(string.IsNullOrWhiteSpace(loginAdmin) || string.IsNullOrWhiteSpace(senhaAdmin))
+        {
+            app.Logger.LogWarning("Seed do admin inicial ignorado: configure o AdminInicial:Login e AdminInicial:Senha");
+        }
+        else
+        {
+            var autenticacaoService = escopo.ServiceProvider.GetRequiredService<IAutenticacaoService>();
+
+            await autenticacaoService.RegistrarAsync(new RegistrarUsuarioRequest
+            {
+                Login = loginAdmin,
+                Senha = senhaAdmin,
+                Role = RoleUsuario.Admin
+            });
+
+            app.Logger.LogInformation("Admin inicial '{Login}' criado.", loginAdmin);
+        }
+    }
+    catch(UsuarioJaExisteException)
+    {
+        //Já existe: o seed é idempotente, não há o que fazer.
+    }
+    catch(Exception ex)
+    {
+        app.Logger.LogWarning(ex, "Seed do admin inicial não iniciado");
+    }
+    
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
