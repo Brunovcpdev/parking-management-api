@@ -8,10 +8,10 @@ Projeto pessoal desenvolvido para praticar arquitetura em camadas, EF Core, test
 
 O projeto é dividido em camadas, cada uma em seu próprio projeto, seguindo o fluxo de dependência `Api → Application → Domain` e `Infrastructure → Application/Domain`:
 
-- **Estacionamento.Domain** — Entidades e regras de negócio puras (`Vaga`, `Veiculo`, `Ticket`, `TabelaPreco`), enums, interfaces de repositório e exceções de domínio. Não depende de nenhuma outra camada.
-- **Estacionamento.Application** — Casos de uso (`EntradaService`, `SaidaService`, `CalculadoraPrecoService`), DTOs de request/response e as interfaces desses serviços.
+- **Estacionamento.Domain** — Entidades e regras de negócio puras (`Vaga`, `Veiculo`, `Ticket`, `TabelaPreco`, `Usuario`), enums, interfaces de repositório e exceções de domínio. Não depende de nenhuma outra camada.
+- **Estacionamento.Application** — Casos de uso (`EntradaService`, `SaidaService`, `CalculadoraPrecoService`, `AutenticacaoService`), DTOs de request/response e as interfaces desses serviços.
 - **Estacionamento.Infrastructure** — Acesso a dados via Entity Framework Core (SQL Server), implementação dos repositórios e migrations.
-- **Estacionamento.Api** — Camada de apresentação: Controllers REST e configuração do Swagger.
+- **Estacionamento.Api** — Camada de apresentação: Controllers REST, autenticação JWT e configuração do Swagger.
 - **Estacionamento.Tests** — Testes automatizados (xUnit + Moq).
 
 ## Status atual
@@ -25,14 +25,18 @@ O projeto é dividido em camadas, cada uma em seu próprio projeto, seguindo o f
 - Consulta do resumo de vagas (total, livres, ocupadas)
 - Cadastro automático de veículo na primeira vez que uma placa é vista pelo sistema
 - Liberação e ocupação de vagas de forma consistente com o fluxo de entrada/saída
-- Tratamento de erro com exceções específicas de domínio, mapeadas para os códigos HTTP corretos (404, 409, 400)
+- Tratamento de erro com exceções específicas de domínio, mapeadas para os códigos HTTP corretos (404, 409, 400, 401, 403)
+- Autenticação com JWT e autorização por perfis (`Operador` e `Admin`)
+- Senhas armazenadas como hash BCrypt (nunca em texto puro)
+- Criação automática do primeiro usuário Admin (seed idempotente) a partir de configuração segura
 
 ### Ainda não implementado
 
 - Histórico de movimentações por placa/período
 - Cadastro de tabela de preços via API (hoje é feito direto no banco)
-- Autenticação/autorização
+- Troca de senha e refresh token
 - Logging estruturado
+- Testes unitários do `AutenticacaoService`
 
 ## Regras de negócio
 
@@ -112,9 +116,71 @@ Retorna o resumo de ocupação das vagas.
 }
 ```
 
+## Autenticação e autorização
+
+A API usa **JWT Bearer**. Todos os endpoints, exceto o login, exigem um token válido.
+
+| Endpoint | Sem token | Operador | Admin |
+|---|---|---|---|
+| `POST /api/Autenticacao/login` | ✅ | ✅ | ✅ |
+| `POST /api/Autenticacao/registrar` | 401 | 403 | ✅ |
+| `POST /api/Entrada`, `POST /api/Saida`, `GET /api/Vaga` | 401 | ✅ | ✅ |
+
+Só um Admin pode criar novos usuários; não existe cadastro público.
+
+### `POST /api/Autenticacao/login`
+
+**Request**
+```json
+{
+  "login": "seu-login",
+  "senha": "sua-senha"
+}
+```
+
+**Response — 200 OK**
+```json
+{
+  "token": "eyJhbGciOi...",
+  "login": "seu-login",
+  "role": "Admin",
+  "expiraEm": "2026-10-16T15:00:00Z"
+}
+```
+
+**Possíveis erros**: `401 Unauthorized` (login ou senha inválidos — a mensagem é a mesma nos dois casos, para não revelar quais logins existem).
+
+### `POST /api/Autenticacao/registrar` (somente Admin)
+
+**Request**
+```json
+{
+  "login": "operador1",
+  "senha": "uma-senha-forte",
+  "role": 1
+}
+```
+
+`role` segue o enum: `1 = Operador`, `2 = Admin`.
+
+**Resposta**: `201 Created`. **Possíveis erros**: `409 Conflict` (login já existe), `400 Bad Request` (dados inválidos), `401` (sem token ou token expirado), `403 Forbidden` (usuário autenticado não é Admin).
+
+### Detalhes de segurança
+
+- Senhas com **BCrypt** (salt embutido no hash).
+- Token assinado com HMAC-SHA256, com validação de `Issuer`, `Audience`, assinatura e expiração (60 minutos por padrão).
+- Logins são normalizados (`trim` + minúsculas) antes de salvar e consultar.
+- O payload do JWT é apenas codificado, não criptografado: nunca coloque dados sensíveis nele.
+
+### Usando o token no Swagger
+
+1. Faça `POST /api/Autenticacao/login` e copie o valor de `token`.
+2. Clique em **Authorize** (cadeado, no topo da página).
+3. Cole **apenas o token**, sem a palavra `Bearer`, e confirme.
+
 ## Testes
 
-O projeto conta com 13 testes unitários (xUnit + Moq) cobrindo:
+O projeto conta com 13 testes unitários (xUnit + Moq) cobrindo as regras de negócio abaixo. O `AutenticacaoService` ainda **não** tem testes:
 
 - **RN01** — bloqueio de entrada duplicada para a mesma placa (`EntradaServiceTests`)
 - **RN02** — cálculo de valor: dentro da tolerância, por fração (com `[Theory]`/`[InlineData]` cobrindo múltiplos cenários) e com teto de diária (`CalculadoraPrecoServiceTests`)
@@ -134,15 +200,40 @@ dotnet test
 
 ## Configuração
 
-Antes de rodar o projeto, configure a connection string em `Estacionamento.Api/appsettings.json` (ou preferencialmente via `appsettings.Development.json` / variáveis de ambiente / user-secrets, que não vão para o repositório):
+### appsettings.json (sem segredos)
+
+Em `Estacionamento.Api/appsettings.json` ficam apenas valores **não sensíveis**:
 
 ```json
 {
   "ConnectionStrings": {
     "DefaultConnection": "sua-connection-string-aqui"
+  },
+  "Jwt": {
+    "Issuer": "EstacionamentoApi",
+    "Audience": "EstacionamentoApiUsuarios",
+    "ExpiraMinutos": 60
   }
 }
 ```
+
+### Segredos (obrigatório)
+
+A chave de assinatura do JWT e as credenciais do primeiro Admin **não estão no repositório** e precisam ser configuradas por quem clonar o projeto. Em desenvolvimento, use o user-secrets:
+
+```bash
+dotnet user-secrets set "Jwt:Key" "<chave-aleatoria-com-no-minimo-32-caracteres>" --project Estacionamento.Api
+dotnet user-secrets set "AdminInicial:Login" "<login-do-admin>" --project Estacionamento.Api
+dotnet user-secrets set "AdminInicial:Senha" "<senha-do-admin>" --project Estacionamento.Api
+```
+
+- Sem `Jwt:Key`, a API não consegue gerar nem validar tokens.
+- Sem `AdminInicial:Login`/`AdminInicial:Senha`, o seed é ignorado (com um warning no log) e não haverá nenhum usuário para fazer login. Não existe senha padrão, de propósito.
+- No startup, a API cria o Admin se ele ainda não existir. Se já existir, nada acontece (idempotente).
+- O user-secrets **não é criptografado** e serve só para desenvolvimento. Em produção, use variáveis de ambiente (`Jwt__Key`, `AdminInicial__Login`, ...) ou um cofre de segredos.
+- Ordem de precedência: `appsettings.json` < user-secrets < variáveis de ambiente.
+
+> **Nunca** commite chaves, senhas ou tokens. O repositório é público.
 
 ## Como rodar
 
@@ -157,7 +248,7 @@ Aplique as migrations para criar o banco de dados:
 dotnet ef database update --project Estacionamento.Infrastructure --startup-project Estacionamento.Api
 ```
 
-Rode a API:
+Configure os segredos (seção acima) e rode a API:
 
 ```bash
 dotnet run --project Estacionamento.Api
@@ -165,7 +256,9 @@ dotnet run --project Estacionamento.Api
 
 O Swagger estará disponível em `https://localhost:{porta}/swagger`.
 
-> **Nota**: para testar o fluxo de saída, é necessário cadastrar ao menos uma linha na tabela `TabelasPreco` diretamente no banco, já que o cadastro via API ainda não foi implementado.
+> **Nota 1**: para testar o fluxo de saída, é necessário cadastrar ao menos uma linha na tabela `TabelasPreco` diretamente no banco, já que o cadastro via API ainda não foi implementado. Sem ela, `POST /api/Saida` retorna `404`.
+>
+> **Nota 2**: para testar pelo Swagger, faça login com o Admin do seed e use o botão **Authorize**.
 
 ## Tecnologias
 
@@ -173,6 +266,8 @@ O Swagger estará disponível em `https://localhost:{porta}/swagger`.
 - ASP.NET Core Web API
 - Entity Framework Core (SQL Server)
 - xUnit + Moq
+- JWT Bearer (`Microsoft.AspNetCore.Authentication.JwtBearer`)
+- BCrypt.Net-Next (hash de senhas)
 - Swagger / Swashbuckle
 
 ## Padrões aplicados
@@ -182,3 +277,5 @@ O Swagger estará disponível em `https://localhost:{porta}/swagger`.
 - Dependency Injection
 - Strategy Pattern (cálculo de preço isolado em `ICalculadoraPrecoService`)
 - DTOs para isolar contratos de API das entidades de domínio
+- Autorização baseada em roles (`[Authorize(Roles = "Admin")]`)
+- Seed idempotente de dados iniciais
