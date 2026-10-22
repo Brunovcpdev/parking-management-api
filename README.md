@@ -36,7 +36,6 @@ O projeto é dividido em camadas, cada uma em seu próprio projeto, seguindo o f
 - Cadastro de tabela de preços via API (hoje é feito direto no banco)
 - Troca de senha e refresh token
 - Logging estruturado
-- Testes unitários do `AutenticacaoService`
 
 ## Regras de negócio
 
@@ -180,12 +179,18 @@ Só um Admin pode criar novos usuários; não existe cadastro público.
 
 ## Testes
 
-O projeto conta com 13 testes unitários (xUnit + Moq) cobrindo as regras de negócio abaixo. O `AutenticacaoService` ainda **não** tem testes:
+O projeto conta com 19 testes unitários (xUnit + Moq) cobrindo as regras de negócio e a autenticação:
 
 - **RN01** — bloqueio de entrada duplicada para a mesma placa (`EntradaServiceTests`)
 - **RN02** — cálculo de valor: dentro da tolerância, por fração (com `[Theory]`/`[InlineData]` cobrindo múltiplos cenários) e com teto de diária (`CalculadoraPrecoServiceTests`)
 - **RN03** — bloqueio de entrada quando não há vaga disponível (`EntradaServiceTests`)
 - **Fluxo de saída** — todos os cenários de erro (ticket/vaga/veículo/tabela de preço não encontrados, ticket já finalizado) e o caminho de sucesso completo, incluindo verificação dos efeitos colaterais nas entidades (`SaidaServiceTests`)
+- **Autenticação** (`AutenticacaoServiceTests`, 6 testes):
+  - registro com login já existente lança `UsuarioJaExisteException`
+  - registro de login novo grava a senha como hash BCrypt válido (nunca em texto puro) e normaliza o login
+  - login inexistente e senha errada lançam a mesma `CredenciaisInvalidasException`
+  - login válido devolve um token JWT com `Issuer`, `Audience` e perfil corretos
+  - o login é normalizado (espaços e maiúsculas) antes da consulta
 
 Para rodar os testes:
 
