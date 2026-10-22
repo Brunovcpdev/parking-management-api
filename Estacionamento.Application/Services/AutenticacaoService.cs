@@ -37,7 +37,7 @@ namespace Estacionamento.Application.Services
 
             var senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 
-            var usuario = new Usuario(request.Login, senhaHash, request.Role);
+            var usuario = new Usuario(login, senhaHash, request.Role);
 
             await _usuarioRepository.AdicionarAsync(usuario);
         }
