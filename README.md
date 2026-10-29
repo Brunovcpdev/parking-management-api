@@ -1,5 +1,7 @@
 # Estacionamento
 
+[![CI](https://github.com/Brunovcpdev/parking-management-api/actions/workflows/ci.yml/badge.svg)](https://github.com/Brunovcpdev/parking-management-api/actions/workflows/ci.yml)
+
 Sistema de gestão de estacionamento com registro de entrada e saída de veículos, cálculo automático de cobrança por tempo e persistência em banco de dados. Construído em .NET (net10.0) seguindo Clean Architecture.
 
 Projeto pessoal desenvolvido para praticar arquitetura em camadas, EF Core, testes automatizados e boas práticas de API REST em C#.
