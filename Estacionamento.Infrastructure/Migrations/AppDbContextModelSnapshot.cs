@@ -49,6 +49,9 @@ namespace Estacionamento.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TipoVeiculo")
+                        .IsUnique();
+
                     b.ToTable("TabelaPrecos");
                 });
 

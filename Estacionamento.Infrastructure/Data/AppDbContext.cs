@@ -20,6 +20,7 @@ namespace Estacionamento.Infrastructure.Data
             {
                 entity.Property(t => t.ValorFracao).HasPrecision(18, 2);
                 entity.Property(t => t.ValorDiaria).HasPrecision(18, 2);
+                entity.HasIndex(t => t.TipoVeiculo).IsUnique();
             });
 
             modelBuilder.Entity<Ticket>(entity =>

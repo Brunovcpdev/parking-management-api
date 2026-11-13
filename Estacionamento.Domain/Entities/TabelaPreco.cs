@@ -16,6 +16,16 @@ namespace Estacionamento.Domain.Entities
 
         public TabelaPreco(TipoVeiculo tipoVeiculo, int toleranciaMinutos, int fracaoMinutos, decimal valorFracao, decimal valorDiaria)
         {
+            if (!Enum.IsDefined(tipoVeiculo))
+                throw new ArgumentException("O tipo de veículo informado é inválido.", nameof(tipoVeiculo));
+
+            TipoVeiculo = tipoVeiculo;
+            Atualizar(toleranciaMinutos, fracaoMinutos, valorFracao, valorDiaria);
+
+        }
+
+        public void Atualizar (int toleranciaMinutos, int fracaoMinutos, decimal valorFracao, decimal valorDiaria)
+        {
             if (toleranciaMinutos < 0)
                 throw new ArgumentException("A tolerância não pode ser negativa.", nameof(toleranciaMinutos));
 
@@ -25,9 +35,11 @@ namespace Estacionamento.Domain.Entities
             if (valorFracao < 0 || valorDiaria < 0)
                 throw new ArgumentException("Os valores de cobrança não podem ser negativos.");
 
-            TipoVeiculo = tipoVeiculo;
+            if (valorDiaria < valorFracao)
+                throw new ArgumentException("O valor da diária não pode ser menor que o valor de uma fração.", nameof(valorDiaria));
+    
             ToleranciaMinutos = toleranciaMinutos;
-            FracaoMinutos = fracaoMinutos; 
+            FracaoMinutos = fracaoMinutos;
             ValorFracao = valorFracao;
             ValorDiaria = valorDiaria;
         }
