@@ -1,4 +1,4 @@
-﻿using Estacionamento.Application.DTOs.Response;
+﻿using Estacionamento.Application.DTOs.Responses;
 using Estacionamento.Application.Interfaces;
 using Estacionamento.Domain.Interfaces;
 using Estacionamento.Domain.Enums;

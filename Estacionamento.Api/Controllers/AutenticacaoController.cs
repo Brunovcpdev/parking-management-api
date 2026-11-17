@@ -1,6 +1,6 @@
 ﻿
 using Azure.Core;
-using Estacionamento.Application.DTOs.Request;
+using Estacionamento.Application.DTOs.Requests;
 using Estacionamento.Application.Interfaces;
 using Estacionamento.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;

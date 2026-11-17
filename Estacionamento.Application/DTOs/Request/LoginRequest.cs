@@ -1,4 +1,4 @@
-﻿namespace Estacionamento.Application.DTOs.Request
+﻿namespace Estacionamento.Application.DTOs.Requests
 {
     public class LoginRequest
     {

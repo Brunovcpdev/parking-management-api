@@ -1,5 +1,5 @@
-﻿using Estacionamento.Application.DTOs.Request;
-using Estacionamento.Application.DTOs.Response;
+﻿using Estacionamento.Application.DTOs.Requests;
+using Estacionamento.Application.DTOs.Responses;
 
 namespace Estacionamento.Application.Interfaces
 {

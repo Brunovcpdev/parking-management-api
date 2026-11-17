@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 using Estacionamento.Application.DTos.Requests;
 using Estacionamento.Domain.Enums;
 using Estacionamento.Domain.Exceptions;
-using Estacionamento.Application.DTOs.Request;
+using Estacionamento.Application.DTOs.Requests;
 
 
 var builder = WebApplication.CreateBuilder(args);

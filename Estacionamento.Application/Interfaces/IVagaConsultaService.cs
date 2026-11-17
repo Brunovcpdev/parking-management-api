@@ -1,4 +1,4 @@
-﻿using Estacionamento.Application.DTOs.Response;
+﻿using Estacionamento.Application.DTOs.Responses;
 
 namespace Estacionamento.Application.Interfaces
 {

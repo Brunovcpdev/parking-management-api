@@ -1,0 +1,19 @@
+ Estacionamento.Api/Controllers/AutenticacaoController.cs              | 2 [32m+[m[31m-[m
+ Estacionamento.Api/Controllers/SaidaController.cs                     | 2 [32m+[m[31m-[m
+ Estacionamento.Api/Program.cs                                         | 2 [32m+[m[31m-[m
+ Estacionamento.Application/DTOs/Request/LoginRequest.cs               | 2 [32m+[m[31m-[m
+ Estacionamento.Application/DTOs/Request/RegistrarSaidaRequest.cs      | 2 [32m+[m[31m-[m
+ Estacionamento.Application/DTOs/Request/RegistrarUsuarioRequest.cs    | 2 [32m+[m[31m-[m
+ .../DTOs/Response/ComprovantePagamentoResponse.cs                     | 2 [32m+[m[31m-[m
+ Estacionamento.Application/DTOs/Response/LoginResponse.cs             | 2 [32m+[m[31m-[m
+ Estacionamento.Application/DTOs/Response/TabelaPrecoResponse.cs       | 2 [32m+[m[31m-[m
+ Estacionamento.Application/DTOs/Response/VagaDisponivelResponse.cs    | 2 [32m+[m[31m-[m
+ Estacionamento.Application/Interfaces/IAutenticacaoService.cs         | 4 [32m++[m[31m--[m
+ Estacionamento.Application/Interfaces/ISaidaService.cs                | 4 [32m++[m[31m--[m
+ Estacionamento.Application/Interfaces/IVagaConsultaService.cs         | 2 [32m+[m[31m-[m
+ Estacionamento.Application/Services/AutenticacaoService.cs            | 4 [32m++[m[31m--[m
+ Estacionamento.Application/Services/SaidaService.cs                   | 4 [32m++[m[31m--[m
+ Estacionamento.Application/Services/VagaConsultaService.cs            | 2 [32m+[m[31m-[m
+ Estacionamento.Tests/AutenticacaoServiceTests.cs                      | 2 [32m+[m[31m-[m
+ Estacionamento.Tests/SaidaServiceTests.cs                             | 2 [32m+[m[31m-[m
+ 18 files changed, 22 insertions(+), 22 deletions(-)

@@ -1,5 +1,5 @@
 ﻿using Estacionamento.Application.DTos.Requests;
-using Estacionamento.Application.DTOs.Request;
+using Estacionamento.Application.DTOs.Requests;
 using Estacionamento.Application.Services;
 using Estacionamento.Domain.Entities;
 using Estacionamento.Domain.Enums;

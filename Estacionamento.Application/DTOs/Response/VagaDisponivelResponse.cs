@@ -1,4 +1,4 @@
-﻿namespace Estacionamento.Application.DTOs.Response
+﻿namespace Estacionamento.Application.DTOs.Responses
 {
     public class VagaDisponivelResponse
     {

@@ -1,7 +1,7 @@
 ﻿using BCrypt.Net;
 using Estacionamento.Application.DTos.Requests;
-using Estacionamento.Application.DTOs.Request;
-using Estacionamento.Application.DTOs.Response;
+using Estacionamento.Application.DTOs.Requests;
+using Estacionamento.Application.DTOs.Responses;
 using Estacionamento.Application.Interfaces;
 using Estacionamento.Domain.Entities;
 using Estacionamento.Domain.Exceptions;
