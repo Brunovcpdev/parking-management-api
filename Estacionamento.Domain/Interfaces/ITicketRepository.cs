@@ -1,4 +1,5 @@
 ﻿using Estacionamento.Domain.Entities;
+using Estacionamento.Domain.Enums;
 namespace Estacionamento.Domain.Interfaces
 
 {
@@ -8,5 +9,7 @@ namespace Estacionamento.Domain.Interfaces
         Task AdicionarAsync(Ticket ticket);
         Task<Ticket?> ObterPorIdAsync(int id);
         Task AtualizarAsync(Ticket ticket);
+        Task<bool> ExisteTicketAtivoParaTipoVeiculoAsync(TipoVeiculo tipoVeiculo);
+
     }
 }

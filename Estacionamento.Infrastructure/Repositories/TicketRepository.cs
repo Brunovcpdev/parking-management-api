@@ -43,5 +43,16 @@ namespace Estacionamento.Infrastructure.Repositories
             _context.Tickets.Update(ticket);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> ExisteTicketAtivoParaTipoVeiculoAsync(TipoVeiculo tipoVeiculo)
+        {
+            return await _context.Tickets
+                .Join(_context.Veiculos,
+                ticket => ticket.VeiculoId,
+                veiculo => veiculo.Id,
+                (ticket, veiculo) => new {  ticket, veiculo })
+                .AnyAsync(tv => tv.ticket.Status == StatusTicket.Ativo && tv.veiculo.Tipo == tipoVeiculo);
+
+        }
     }
 }

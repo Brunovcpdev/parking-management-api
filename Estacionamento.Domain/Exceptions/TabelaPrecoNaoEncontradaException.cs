@@ -8,5 +8,10 @@ namespace Estacionamento.Domain.Exceptions
             base ($"Tabela de preço para o tipo {tipoVeiculo} não encontrada.")
         {
         }
+
+        public TabelaPrecoNaoEncontradaException(int id) :
+            base($"Tabela de preço para o tipo {id} não encontrada.")
+        {
+        }
     }
 }
